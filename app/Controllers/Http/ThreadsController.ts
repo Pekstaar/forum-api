@@ -51,20 +51,42 @@ export default class ThreadsController {
   }
 
   // update Thread
-  public async update({ request, params }: HttpContextContract) {
+  public async update({ request, params, response }: HttpContextContract) {
 
-    const thread = await Thread.findOrFail(params.id)
+    try {
+      const thread = await Thread.findOrFail(params.id)
 
-    const validatedData = await request.validate(UPdateThreadValidator)
+      const validatedData = await request.validate(UPdateThreadValidator)
 
-    thread.merge(validatedData)
+      thread.merge(validatedData)
 
-    await thread.save()
+      await thread.save()
 
-    await thread.preload('user')
-    await thread.preload('category')
+      await thread.preload('user')
+      await thread.preload('category')
 
-    return thread;
+      return thread;
+
+    } catch (error) {
+
+      response.status(500).send(error.message)
+
+    }
+
   }
 
+  // delete Thread
+  public async destroy({ params, response }: HttpContextContract) {
+    try {
+      const thread = await Thread.findOrFail(params.id)
+
+      await thread.delete()
+
+      return "Thread Deleted Successfully!"
+    } catch (error) {
+      response.status(500).send(error.message)
+
+    }
+
+  }
 }

@@ -16,6 +16,6 @@ Route.group(() => {
 
   Route.patch('threads/:id', 'ThreadsController.update')
 
-  Route.delete('threads:id', 'ThreadsController.destroy')
+  Route.delete('threads/:id', 'ThreadsController.destroy')
 
 }).prefix('api')
