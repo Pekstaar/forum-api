@@ -1,6 +1,7 @@
 import { HttpContextContract } from '@ioc:Adonis/Core/HttpContext'
 import Thread from 'App/Models/Thread'
 import ThreadValidator from 'App/Validators/ThreadValidator'
+import UPdateThreadValidator from 'App/Validators/UpdateThreadValidator';
 
 export default class ThreadsController {
 
@@ -47,6 +48,23 @@ export default class ThreadsController {
     } catch (error) {
       response.status(500).send(error.message);
     }
+  }
+
+  // update Thread
+  public async update({ request, params }: HttpContextContract) {
+
+    const thread = await Thread.findOrFail(params.id)
+
+    const validatedData = await request.validate(UPdateThreadValidator)
+
+    thread.merge(validatedData)
+
+    await thread.save()
+
+    await thread.preload('user')
+    await thread.preload('category')
+
+    return thread;
   }
 
 }
