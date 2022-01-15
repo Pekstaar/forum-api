@@ -7,8 +7,9 @@
 
 First, run the api:
 
-````bash
+```bash
 node ace serve
+```
 
 Run the client:
 
@@ -16,7 +17,7 @@ Run the client:
 npm run dev
 # or
 yarn dev
-````
+```
 
 Open [http://localhost:3000](http://localhost:3000) with your browser to see the result.
 
