@@ -5,13 +5,18 @@
 - Front end - Next js
 - Back end - Adonis js
 
-First, run the development server:
+First, run the api:
+
+````bash
+node ace serve
+
+Run the client:
 
 ```bash
 npm run dev
 # or
 yarn dev
-```
+````
 
 Open [http://localhost:3000](http://localhost:3000) with your browser to see the result.
 
