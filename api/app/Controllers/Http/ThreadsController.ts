@@ -1,34 +1,61 @@
 import { HttpContextContract } from '@ioc:Adonis/Core/HttpContext'
+import UnauthorizedExeption from 'App/Exceptions/UnauthorizedExeption';
 import Thread from 'App/Models/Thread'
+import SortValidator from 'App/Validators/SortValidator';
 import ThreadValidator from 'App/Validators/ThreadValidator'
 import UPdateThreadValidator from 'App/Validators/UpdateThreadValidator';
 
 export default class ThreadsController {
 
   // get all threads
-  public async index({ request }: HttpContextContract) {
-    const page = request.input('page', 1)
+  public async index({ request, response }: HttpContextContract) {
 
-    const perPage = request.input('per_page', 25)
+    try {
 
-    const userId = request.input('user_id')
+      const page = request.input('page', 1)
 
-    const categoryId = request.input('category_id')
+      const perPage = request.input('per_page', 25)
+
+      const userId = request.input('user_id')
+
+      const categoryId = request.input('category_id')
 
 
-    const threads = await Thread.query()
-      .if(userId, (query) =>
-        query.where('user_id', userId)
-      )
-      .if(categoryId, (query) =>
-        query.where('category_id', categoryId)
-      )
-      .preload('user')
-      .preload('category')
-      .preload('replies')
-      .paginate(page, perPage)
+      const validatedData = await request.validate(SortValidator)
 
-    return threads;
+      const sortBy = validatedData.sort_by || 'id'
+
+      const order = validatedData.order || 'asc'
+
+
+      const threads = await Thread.query()
+
+        .if(userId, (query) =>
+          query.where('user_id', userId)
+        )
+
+        .if(categoryId, (query) =>
+          query.where('category_id', categoryId)
+        )
+
+        .orderBy(sortBy, order)
+
+        .preload('user')
+
+        .preload('category')
+
+        .preload('replies')
+
+        .paginate(page, perPage)
+
+
+      return response.ok({ data: threads });
+
+    } catch (error) {
+
+      response.status(500).json(error);
+
+    }
   }
 
   // create thread
@@ -42,12 +69,11 @@ export default class ThreadsController {
       await thread?.preload('category')
       await thread?.preload('replies')
 
-      return thread;
+      return response.created({ data: thread });
+
     } catch (err) {
       response.status(500).send(err.message);
     }
-
-
 
   }
 
@@ -62,7 +88,7 @@ export default class ThreadsController {
         .preload('replies')
         .firstOrFail()
 
-      return thread;
+      return response.ok({ data: thread });
 
     } catch (error) {
       response.status(500).send(error.message);
@@ -70,12 +96,16 @@ export default class ThreadsController {
   }
 
   // update Thread
-  public async update({ request, params, response }: HttpContextContract) {
+  public async update({ request, params, response, auth }: HttpContextContract) {
 
     try {
       const thread = await Thread.findOrFail(params.id)
 
       const validatedData = await request.validate(UPdateThreadValidator)
+
+      if (auth.user?.id !== thread.userId) {
+        throw new UnauthorizedExeption('You can only edit your own threads.')
+      }
 
       thread.merge(validatedData)
 
@@ -85,7 +115,7 @@ export default class ThreadsController {
       await thread.preload('category')
       await thread.preload('replies')
 
-      return thread;
+      return response.ok({ data: thread });
 
     } catch (error) {
 
@@ -96,13 +126,18 @@ export default class ThreadsController {
   }
 
   // delete Thread
-  public async destroy({ params, response }: HttpContextContract) {
+  public async destroy({ params, response, auth }: HttpContextContract) {
     try {
       const thread = await Thread.findOrFail(params.id)
 
+      if (auth.user?.id !== thread.userId) {
+        throw new UnauthorizedExeption('You can only manage your own threads.')
+      }
+
       await thread.delete()
 
-      return "Thread Deleted Successfully!"
+      return response.noContent()
+
     } catch (error) {
       response.status(500).send(error.message)
 

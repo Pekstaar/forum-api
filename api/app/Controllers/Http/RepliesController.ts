@@ -17,7 +17,7 @@ export default class RepliesController {
       await reply.preload('user')
       await reply.preload('thread')
 
-      return reply;
+      return response.created({ data: reply });
 
     } catch (error) {
 
