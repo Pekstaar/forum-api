@@ -11,7 +11,7 @@ const Layout = ({ children }) => {
       <body className="bg-gray-200 h-screen">
         <Navbar />
 
-        <main className="container">{children}</main>
+        <main className="container mx-auto h-full">{children}</main>
 
         <Footer />
       </body>
