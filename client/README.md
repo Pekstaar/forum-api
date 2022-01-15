@@ -1,6 +1,6 @@
 # Quiz Platform
 
-## Technologies:
+### Technologies:
 
 - Front end - Next js
 - Back end - Adonis js
