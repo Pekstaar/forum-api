@@ -1,5 +1,10 @@
 # Quiz Platform
 
+## Technologies:
+
+- Front end - Next js
+- Back end - Adonis js
+
 First, run the development server:
 
 ```bash
