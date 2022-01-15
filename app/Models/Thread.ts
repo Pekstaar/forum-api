@@ -1,8 +1,9 @@
 import { DateTime } from 'luxon'
 import Category from 'App/Models/Category'
-import { BaseModel, belongsTo, column } from '@ioc:Adonis/Lucid/Orm'
+import { BaseModel, belongsTo, column, HasMany, hasMany } from '@ioc:Adonis/Lucid/Orm'
 import User from './User'
 import { BelongsTo } from '@ioc:Adonis/Lucid/Orm'
+import Reply from './Reply'
 
 export default class Thread extends BaseModel {
   @column({ isPrimary: true })
@@ -32,4 +33,7 @@ export default class Thread extends BaseModel {
 
   @belongsTo(() => User)
   public user: BelongsTo<typeof User>
+
+  @hasMany(() => Reply)
+  public replies: HasMany<typeof Reply>
 }

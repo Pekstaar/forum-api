@@ -18,4 +18,6 @@ Route.group(() => {
 
   Route.delete('threads/:id', 'ThreadsController.destroy')
 
+  Route.post('threads/:threadId/replies', 'RepliesController.store').middleware('auth')
+
 }).prefix('api')

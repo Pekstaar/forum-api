@@ -6,10 +6,27 @@ import UPdateThreadValidator from 'App/Validators/UpdateThreadValidator';
 export default class ThreadsController {
 
   // get all threads
-  public async index() {
+  public async index({ request }: HttpContextContract) {
+    const page = request.input('page', 1)
+
+    const perPage = request.input('per_page', 25)
+
+    const userId = request.input('user_id')
+
+    const categoryId = request.input('category_id')
+
+
     const threads = await Thread.query()
+      .if(userId, (query) =>
+        query.where('user_id', userId)
+      )
+      .if(categoryId, (query) =>
+        query.where('category_id', categoryId)
+      )
       .preload('user')
       .preload('category')
+      .preload('replies')
+      .paginate(page, perPage)
 
     return threads;
   }
@@ -23,6 +40,7 @@ export default class ThreadsController {
 
       await thread?.preload('user')
       await thread?.preload('category')
+      await thread?.preload('replies')
 
       return thread;
     } catch (err) {
@@ -41,6 +59,7 @@ export default class ThreadsController {
         .where('id', params.id)
         .preload('user')
         .preload('category')
+        .preload('replies')
         .firstOrFail()
 
       return thread;
@@ -64,6 +83,7 @@ export default class ThreadsController {
 
       await thread.preload('user')
       await thread.preload('category')
+      await thread.preload('replies')
 
       return thread;
 
