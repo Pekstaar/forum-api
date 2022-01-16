@@ -8,10 +8,10 @@ const Layout = ({ children }) => {
     <>
       <Meta />
 
-      <body className="bg-gray-200 h-screen">
+      <body className="bg-gray-200 h-screen ">
         <Navbar />
 
-        <main className="container mx-auto h-full">{children}</main>
+        <main className="container mx-auto min-h-full">{children}</main>
 
         <Footer />
       </body>

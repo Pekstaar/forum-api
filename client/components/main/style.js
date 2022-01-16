@@ -1,5 +1,7 @@
+// main components styling:
+
 export const footer = {
-  main: "p-3 bg-gray-100 text-gray-700 text-lg font-bold text-center static mt-2 w-full",
+  main: "p-3 bg-gray-100 text-gray-700 text-lg font-bold text-center w-full",
 };
 
 export const navBar = {

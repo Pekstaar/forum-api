@@ -1,3 +1,5 @@
+// home components styling:
+
 export const sidenav = {
   title: "text-xl font-medium text-gray-800",
 
